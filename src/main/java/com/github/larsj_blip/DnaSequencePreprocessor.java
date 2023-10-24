@@ -23,7 +23,10 @@ public class DnaSequencePreprocessor {
     private SuffixMatcher suffixMatcher;
     @Getter
     private List<StringComparisonResult> processedDnaData;
+
+//    TODO: should not be settable
     @Getter
+    @Builder.Default
     private int amountOfMatches = 0;
 
 

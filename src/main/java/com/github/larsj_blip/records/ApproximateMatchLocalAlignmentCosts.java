@@ -1,14 +1,28 @@
 package com.github.larsj_blip.records;
 
-public enum ApproximateMatchLocalAlignmentCosts {
-    EQUALITY(10),
-    GAP(-1000),
-    MISMATCH(-5),
-    START_OVER(0);
-    public final int cost;
+public class ApproximateMatchLocalAlignmentCosts implements LocalAlignmentCost{
 
-    ApproximateMatchLocalAlignmentCosts(int cost) {
+    public static final int EQUALITY = 10;
+    public static final int GAP = -10;
+    public static final int MISMATCH = -10;
+    public static final int START_OVER = 0;
+    @Override
+    public int getGapCost() {
+        return GAP;
+    }
 
-        this.cost = cost;
+    @Override
+    public int getMismatchCost() {
+        return MISMATCH;
+    }
+
+    @Override
+    public int getMatchCost() {
+        return EQUALITY;
+    }
+
+    @Override
+    public int getStartOverCost() {
+        return START_OVER;
     }
 }

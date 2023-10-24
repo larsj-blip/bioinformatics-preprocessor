@@ -2,7 +2,6 @@ package com.github.larsj_blip;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import com.github.larsj_blip.matchers.ExactSuffixMatcher;
 import org.junit.jupiter.api.Test;
