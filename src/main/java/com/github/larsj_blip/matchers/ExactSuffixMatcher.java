@@ -59,10 +59,6 @@ public class ExactSuffixMatcher implements SuffixMatcher {
         var bestMatchLocation = new BestMatchLocation(0, 0);
         for (var yIndex = 1; yIndex < this.stringToMatchAgainst.size(); yIndex++) {
             for (var xIndex = 1; xIndex < this.adapterSequence.size(); xIndex++) {
-                if(!this.stringToMatchAgainst.get(yIndex-1).equals(this.adapterSequence.get(xIndex-1))){
-                    dpTable.put(yIndex, xIndex, -1000);
-                    ;
-                }
                 var cost =
                     evaluateCostBasedOnSurroundingCells(yIndex, xIndex).stream().max(Integer::compareTo);
                 if (cost.isPresent()) {
