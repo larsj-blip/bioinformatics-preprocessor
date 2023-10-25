@@ -33,13 +33,13 @@ public interface SuffixMatcher {
 
     default List<String> evaluateAlignments(){
         var result = getSuffixLocalAlignment();
-        if (result.bestMatch() != 0) {
-//            TODO: traverse DP table to get match!
+        if (result.bestMatchScore() != 0) {
             var amountOfMatchingLetters = getMatchLength();
             var stringToMatchAgainst = getAlignmentHandler().getStringToMatchAgainst();
             var sequenceLength = getAlignmentHandler().getStringToMatchAgainst().size();
-            return stringToMatchAgainst.subList(sequenceLength - amountOfMatchingLetters - 1,
-                                                sequenceLength);
+            int fromIndex = sequenceLength - amountOfMatchingLetters;
+            return stringToMatchAgainst.subList(fromIndex,
+                                                sequenceLength-1);
         }
         return new ArrayList<>();
     }

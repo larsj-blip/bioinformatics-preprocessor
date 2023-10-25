@@ -33,14 +33,14 @@ class DnaSequencePreprocessorTest {
 
     @Test
     void shouldMatchSuffixOfSequenceToPrefixOf3PrimeAdapterSequence() throws IOException {
-        var preprocessor = initializeExactMatchRealPreprocessor();
+        var preprocessor = initializeExactMatchTestPreprocessor();
         preprocessor.preprocess();
         var amountOfMatches = preprocessor.getAmountOfMatches();
         assertThat(amountOfMatches, is(equalTo(AMOUNT_OF_EXACT_TEST_MATCHES)));
     }
     @Test
     void shouldMatchSuffixOfRealSequencesToPrefixOf3PrimeAdapterSequence() throws IOException {
-        var preprocessor = initializeExactMatchTestPreprocessor();
+        var preprocessor = initializeExactMatchRealPreprocessor();
         preprocessor.preprocess();
         var amountOfMatches = preprocessor.getAmountOfMatches();
         assertThat(amountOfMatches, is(equalTo(592402)));

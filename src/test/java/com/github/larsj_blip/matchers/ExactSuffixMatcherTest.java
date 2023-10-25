@@ -1,4 +1,4 @@
-package com.github.larsj_blip;
+package com.github.larsj_blip.matchers;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

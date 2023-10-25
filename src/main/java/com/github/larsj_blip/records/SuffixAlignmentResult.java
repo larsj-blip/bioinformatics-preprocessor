@@ -1,10 +1,9 @@
 package com.github.larsj_blip.records;
 
-public record SuffixAlignmentResult(int bestMatch, DpTableLocation bestMatchLocation) {
+public record SuffixAlignmentResult(int bestMatchScore, DpTableLocation bestMatchLocation) {
 
-    @Override
-    public int bestMatch() {
-        return bestMatch;
+    public int bestMatchScore() {
+        return bestMatchScore;
     }
 
     @Override
