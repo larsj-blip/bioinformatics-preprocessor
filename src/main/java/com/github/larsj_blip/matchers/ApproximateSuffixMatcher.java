@@ -1,31 +1,41 @@
 package com.github.larsj_blip.matchers;
 
-import com.github.larsj_blip.LocalAlignmentMatcher;
+import com.github.larsj_blip.AlignmentHandler;
+import com.github.larsj_blip.LocalAlignmentHandler;
 import com.github.larsj_blip.SuffixMatcher;
 import com.github.larsj_blip.records.ApproximateMatchLocalAlignmentCosts;
-import com.github.larsj_blip.records.StringComparisonResult;
 import java.util.Arrays;
+import java.util.List;
 
 public class ApproximateSuffixMatcher implements SuffixMatcher {
-    private final double errorMargin;
-    private final LocalAlignmentMatcher matcher;
 
-    public ApproximateSuffixMatcher(double errorMargin, String adapterSequence) {
-        this.matcher = LocalAlignmentMatcher.builder()
+    private final LocalAlignmentHandler matcher;
+    private final int smallestAllowableScore;
+
+    public ApproximateSuffixMatcher(int errorMargin, String adapterSequence) {
+        this.matcher = LocalAlignmentHandler.builder()
                            .withCost(new ApproximateMatchLocalAlignmentCosts())
                            .withAdapterSequence(Arrays.stream(adapterSequence.split("(?!^)")).toList())
                            .build();
-        this.errorMargin = errorMargin;
+        smallestAllowableScore = ((100 * matcher.getCost().getMatchCost()
+                                   - matcher.getCost().getMatchCost() * errorMargin) + errorMargin * matcher.getCost()
+                                                                                                         .getMismatchCost())
+                                 / 100;
     }
 
     @Override
-    public StringComparisonResult matchAgainst(String stringToMatchAgainst) {
-        matcher.setStringToMatchAgainst(Arrays.stream(stringToMatchAgainst.split("(?!^)")).toList());
-        return new StringComparisonResult(false,0, "","" );
+    public AlignmentHandler getAlignmentHandler() {
+        return matcher;
+    }
+
+    @Override
+    public String getPrefixForBestSuffixMatch(List<String> match) {
+        return concatenateListToString(matcher.getMatchPrefix(match));
     }
 
     @Override
     public boolean suffixFulfillsCustomRequirement(Integer suffixMapKey, Integer suffixMapValue) {
-        return suffixMapValue > (9*matcher.getCost().getMatchCost()-matcher.getCost().getMismatchCost())/errorMargin;
+
+        return suffixMapValue >= smallestAllowableScore * getMatchLength();
     }
 }

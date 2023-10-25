@@ -60,7 +60,7 @@ class DnaSequencePreprocessorTest {
     }
 
     private static DnaSequencePreprocessor initializeApproximateMatchPreprocessor() {
-        var approximateSuffixMatcher = new ApproximateSuffixMatcher(0.1, TEST_ADAPTER_SEQUENCE);
+        var approximateSuffixMatcher = new ApproximateSuffixMatcher(10, TEST_ADAPTER_SEQUENCE);
         var preprocessor = DnaSequencePreprocessor.builder()
                                .suffixMatcher(approximateSuffixMatcher)
                                .resourceLocation(PATH_TO_SIMPLE_FAKE_DNA_SEQUENCE)
