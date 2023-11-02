@@ -9,12 +9,14 @@ import java.util.Map;
 
 public interface SuffixMatcher {
 
+    int NO_MATCHING_LETTERS_IN_SUFFIX = 0;
+
     default StringComparisonResult matchAgainst(String stringToMatchAgainst) {
         setStringToMatchAgainst(stringToMatchAgainst);
         var match = evaluateAlignments();
         return returnBestResultOrNothing(match);
     }
-
+// this should return optional if it may be null?? or not
     default StringComparisonResult returnBestResultOrNothing(List<String> match) {
         if (match.size() > 1) {
             var matchPrefix = getPrefixForBestSuffixMatch(match);
@@ -33,12 +35,12 @@ public interface SuffixMatcher {
 
     default List<String> evaluateAlignments(){
         var result = getSuffixLocalAlignment();
-        if (result.bestMatch() != 0) {
-//            TODO: traverse DP table to get match!
+        if (result.bestMatchScore() != 0) {
             var amountOfMatchingLetters = getMatchLength();
             var stringToMatchAgainst = getAlignmentHandler().getStringToMatchAgainst();
             var sequenceLength = getAlignmentHandler().getStringToMatchAgainst().size();
-            return stringToMatchAgainst.subList(sequenceLength - amountOfMatchingLetters - 1,
+            int fromIndex = sequenceLength - amountOfMatchingLetters;
+            return stringToMatchAgainst.subList(fromIndex,
                                                 sequenceLength);
         }
         return new ArrayList<>();
@@ -60,18 +62,17 @@ public interface SuffixMatcher {
 
     default SuffixAlignmentResult getBestSuffixMatch(Map<Integer, Integer> finalRowOfDpTable, Integer finalRowKey) {
 
-        var bestSuffixMatch = 0;
-        SuffixAlignmentResult bestSuffixAlignmentResult;
-        var columnKey = 0;
-        for (var set: finalRowOfDpTable.entrySet()){
-            if (set.getValue() > bestSuffixMatch && suffixFulfillsCustomRequirement(set.getKey(), set.getValue())) {
-                bestSuffixMatch = set.getValue();
-                columnKey = set.getKey();
-            }
+        var bestSuffixMatch = NO_MATCHING_LETTERS_IN_SUFFIX;
+        var columnKey = finalRowOfDpTable.size()-1;
+        Integer bestSuffixScore = finalRowOfDpTable.get(columnKey);
+        boolean isGreaterThanCurrentMax = bestSuffixScore > NO_MATCHING_LETTERS_IN_SUFFIX;
+        boolean suffixFulfillsCustomRequirement = suffixFulfillsCustomRequirement(columnKey,bestSuffixScore);
+        if (isGreaterThanCurrentMax && suffixFulfillsCustomRequirement) {
+            bestSuffixMatch = bestSuffixScore;
         }
-        bestSuffixAlignmentResult = new SuffixAlignmentResult(bestSuffixMatch, new DpTableLocation(columnKey,
-                                                                                                   finalRowKey));
-        return bestSuffixAlignmentResult;
+
+        return new SuffixAlignmentResult(bestSuffixMatch, new DpTableLocation(columnKey,
+                                                                              finalRowKey));
     }
     boolean suffixFulfillsCustomRequirement(Integer suffixMapKey, Integer suffixMapValue);
 }

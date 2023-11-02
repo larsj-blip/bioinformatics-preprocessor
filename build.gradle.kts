@@ -14,6 +14,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.hamcrest:hamcrest:2.2")
     implementation ("com.google.guava:guava:32.1.3-jre")
+    implementation ("org.knowm.xchart:xchart:3.8.5")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
     compileOnly("org.projectlombok:lombok:1.18.30")
 }

@@ -30,16 +30,16 @@ public class LocalAlignmentHandler implements AlignmentHandler {
     public SuffixAlignmentResult getLocalAlignment() {
         var bestMatch = 0;
         var bestMatchLocation = new DpTableLocation(0, 0);
-        for (var yIndex = 1; yIndex < this.stringToMatchAgainst.size(); yIndex++) {
-            for (var xIndex = 1; xIndex < this.adapterSequence.size(); xIndex++) {
+        for (var rowIndex = 1; rowIndex < this.stringToMatchAgainst.size(); rowIndex++) {
+            for (var columnIndex = 1; columnIndex < this.adapterSequence.size(); columnIndex++) {
                 var cost =
-                    evaluateCostBasedOnSurroundingCells(yIndex, xIndex).stream().max(Integer::compareTo);
+                    evaluateCostBasedOnSurroundingCells(rowIndex, columnIndex).stream().max(Integer::compareTo);
                 if (cost.isPresent()) {
                     var nonNullCost = cost.get();
-                    dpTable.put(yIndex, xIndex, nonNullCost);
+                    dpTable.put(rowIndex, columnIndex, nonNullCost);
                     if (nonNullCost > bestMatch) {
                         bestMatch = nonNullCost;
-                        bestMatchLocation = new DpTableLocation(xIndex, yIndex);
+                        bestMatchLocation = new DpTableLocation(columnIndex, rowIndex);
                     }
                 }
             }
@@ -87,11 +87,14 @@ public class LocalAlignmentHandler implements AlignmentHandler {
         if (stringToBeMatchedGapValue != null) {
             yGapCost = stringToBeMatchedGapValue + cost.getGapCost();
         }
-        var matchCost = cost.getMismatchCost();
-        if (hasTheSameCharacterInPreviousEntry(yIndex, xIndex)) {
-            var previousValueAligmentMatchCost = dpTable.get(yIndex - 1, xIndex - 1);
-            matchCost = previousValueAligmentMatchCost != null ? cost.getMatchCost() + previousValueAligmentMatchCost :
-                                                                                                                          cost.getMismatchCost();
+        var previousValueAlignmentMatchCost = dpTable.get(yIndex - 1, xIndex - 1);
+        var matchCost = 0;
+        if (previousValueAlignmentMatchCost != null){
+            if (hasTheSameCharacterInPreviousEntry(yIndex, xIndex)){
+                matchCost = previousValueAlignmentMatchCost + cost.getMatchCost();
+            } else{
+                matchCost = previousValueAlignmentMatchCost + cost.getMismatchCost();
+            }
         }
         return List.of(xGapCost, yGapCost, matchCost, cost.getStartOverCost());
     }

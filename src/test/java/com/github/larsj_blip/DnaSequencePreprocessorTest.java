@@ -1,7 +1,7 @@
 package com.github.larsj_blip;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.anEmptyMap;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -33,21 +33,17 @@ class DnaSequencePreprocessorTest {
 
     @Test
     void shouldMatchSuffixOfSequenceToPrefixOf3PrimeAdapterSequence() throws IOException {
-        var preprocessor = initializeExactMatchRealPreprocessor();
+        var preprocessor = initializeExactMatchTestPreprocessor();
         preprocessor.preprocess();
         var amountOfMatches = preprocessor.getAmountOfMatches();
         assertThat(amountOfMatches, is(equalTo(AMOUNT_OF_EXACT_TEST_MATCHES)));
     }
     @Test
     void shouldMatchSuffixOfRealSequencesToPrefixOf3PrimeAdapterSequence() throws IOException {
-        var preprocessor = initializeExactMatchTestPreprocessor();
+        var preprocessor = initializeExactMatchRealPreprocessor();
         preprocessor.preprocess();
         var amountOfMatches = preprocessor.getAmountOfMatches();
         assertThat(amountOfMatches, is(equalTo(592402)));
-    }
-
-    @Test
-    void shouldGetLengthDistributionFromResultSet() {
     }
 
     @Test
@@ -59,13 +55,22 @@ class DnaSequencePreprocessorTest {
         assertThat(amountOfMatches, is(equalTo(AMOUNT_OF_TEST_MATCHES_WITH_TEN_PERCENT_ERROR_MARGIN)));
     }
 
+
+    @Test
+    void shouldGetLengthDistributionFromResultSetAsXAndYCoordinates() throws IOException {
+        var preprocessor = initializeExactMatchRealPreprocessor();
+        preprocessor.preprocess();
+        var lengthDistribution = preprocessor.getLengthDistribution();
+        preprocessor.plotLengthDistribution();
+        assertThat(lengthDistribution, is(not(anEmptyMap())));
+    }
+
     private static DnaSequencePreprocessor initializeApproximateMatchPreprocessor() {
         var approximateSuffixMatcher = new ApproximateSuffixMatcher(10, TEST_ADAPTER_SEQUENCE);
-        var preprocessor = DnaSequencePreprocessor.builder()
+        return DnaSequencePreprocessor.builder()
                                .suffixMatcher(approximateSuffixMatcher)
                                .resourceLocation(PATH_TO_SIMPLE_FAKE_DNA_SEQUENCE)
                                .build();
-        return preprocessor;
     }
 
     private static DnaSequencePreprocessor initializeExactMatchRealPreprocessor() throws IOException {
